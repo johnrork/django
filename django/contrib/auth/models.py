@@ -8,7 +8,7 @@ from django.db import models
 from django.db.models.manager import EmptyManager
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
-
+from django.contrib.auth import username_validation
 from .validators import UnicodeUsernameValidator
 
 
@@ -298,14 +298,13 @@ class AbstractUser(AbstractBaseUser, PermissionsMixin):
 
     Username and password are required. Other fields are optional.
     """
-    username_validator = UnicodeUsernameValidator()
 
     username = models.CharField(
         _('username'),
         max_length=150,
         unique=True,
-        help_text=_('Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.'),
-        validators=[username_validator],
+        help_text= username_validation.username_validators_help_text_html(),
+        validators= username_validation.get_default_username_validators(),
         error_messages={
             'unique': _("A user with that username already exists."),
         },
